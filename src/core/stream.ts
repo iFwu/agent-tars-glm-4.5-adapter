@@ -134,24 +134,7 @@ export async function handleSSEStream(
           // 如果需要 fallback 且有回调函数
           if (shouldFallback && onFallback) {
             requestLogger.clear()
-
-            // 发送切换说明
-            const switchNotice: OpenAIResponse = {
-              id: `chatcmpl-switch-${Date.now()}`,
-              object: 'chat.completion.chunk',
-              created: Math.floor(Date.now() / 1000),
-              model: providerId,
-              choices: [{
-                index: 0,
-                delta: {
-                  content: `\n\n[系统提示: ${providerId} 遇到问题，正在切换到备用服务 (${providerId})...]\n\n`
-                },
-                finish_reason: null
-              }]
-            }
-            res.write(`data: ${JSON.stringify(switchNotice)}\n\n`)
-
-            console.log(`🔄 ${providerId} 错误，切换到备用服务`)
+            console.log(`🔄 ${providerId} 错误，需要 fallback`)
             const context: StreamContext = {
               providerId,
               requestId: requestLogger.requestId,

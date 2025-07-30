@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { OpenAIRequest, StreamContext } from '../types/index.js'
-import { OpenAICompatibleProvider, OpenAICompatibleConfig } from '../providers/openai-compatible.js'
+import { Provider, ProviderConfig } from './provider.js'
 import { getEnabledProviders } from '../config/providers.js'
 
 export interface FallbackOptions {
@@ -9,7 +9,7 @@ export interface FallbackOptions {
 }
 
 export class FallbackManager {
-  private providers: OpenAICompatibleProvider[] = []
+  private providers: Provider[] = []
   private options: FallbackOptions
 
   constructor(options: FallbackOptions = {}) {
@@ -25,7 +25,7 @@ export class FallbackManager {
 
   private initializeProviders(): void {
     const configs = getEnabledProviders()
-    this.providers = configs.map(config => new OpenAICompatibleProvider(config))
+    this.providers = configs.map(config => new Provider(config))
     
     console.log(`📋 初始化 ${this.providers.length} 个服务提供商:`, 
       this.providers.map(p => p.getName()).join(' -> '))
@@ -93,6 +93,22 @@ export class FallbackManager {
           if (this.options.enableFallbackNotice && currentProviderIndex < this.providers.length) {
             const nextProvider = this.providers[currentProviderIndex]
             console.log(`🔄 ${context.providerId} 失败，切换到 ${nextProvider.getName()}`)
+            
+            // 发送切换提示给用户
+            const switchNotice = {
+              id: `chatcmpl-switch-${Date.now()}`,
+              object: 'chat.completion.chunk',
+              created: Math.floor(Date.now() / 1000),
+              model: context.providerId,
+              choices: [{
+                index: 0,
+                delta: {
+                  content: `\n\n[系统提示: ${context.providerId} 遇到问题，正在切换到 ${nextProvider.getName()}...]\n\n`
+                },
+                finish_reason: null
+              }]
+            }
+            res.write(`data: ${JSON.stringify(switchNotice)}\n\n`)
           }
           
           await tryNextProvider()

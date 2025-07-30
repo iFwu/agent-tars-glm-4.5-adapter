@@ -1,8 +1,8 @@
 import { Response } from 'express'
 import { OpenAIRequest, StreamContext, TransformerFunction } from '../types/index.js'
-import { handleSSEStream } from '../core/stream.js'
+import { handleSSEStream } from './stream.js'
 
-export interface OpenAICompatibleConfig {
+export interface ProviderConfig {
   name: string
   apiKey: string
   baseUrl: string
@@ -15,10 +15,10 @@ export interface OpenAICompatibleConfig {
   requestTransformer?: (request: OpenAIRequest) => any
 }
 
-export class OpenAICompatibleProvider {
-  private config: OpenAICompatibleConfig
+export class Provider {
+  private config: ProviderConfig
 
-  constructor(config: OpenAICompatibleConfig) {
+  constructor(config: ProviderConfig) {
     this.config = config
   }
 

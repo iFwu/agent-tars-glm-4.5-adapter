@@ -1,5 +1,5 @@
 {
-  "name": "tars-agent-glm-4.5-adapter",
+  "name": "agent-tars-glm-4.5-adapter",
   "version": "1.0.0",
   "description": "AI API 转换器 - 支持多服务提供商和 fallback 机制",
   "main": "src/server.ts",
