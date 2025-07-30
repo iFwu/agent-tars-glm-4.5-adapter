@@ -61,13 +61,15 @@ GLM_API_KEY=your_glm_api_key_here
 
 # Fallback 服务商（推荐配置）
 MODELSCOPE_API_KEY=your_modelscope_api_key_here  # 魔搭 Qwen3-Coder
-KIMI_API_KEY=your_kimi_api_key_here              # Kimi-K2
+# 可选，Kimi-K2 实测速度较慢
+# KIMI_API_KEY=your_kimi_api_key_here              # Kimi-K2
 
 # 服务器配置
 PORT=3000
 ```
 
-#### 🛠️ 高级配置 (可选)
+<details>
+<summary>#### 🛠️ 高级 Fallback 策略配置 (可选)</summary>
 
 如果你想自定义 fallback 策略，可以使用 JSON 配置：
 
@@ -89,15 +91,17 @@ FALLBACK_PROVIDERS=[{"provider":"modelscope"},{"model":"gpt-4o","apiKey":"sk-xxx
 - `baseUrl`: API 基础 URL
 
 > 💡 **提示**: 默认配置已经很好用了，大多数用户无需修改
+</details>
+
 
 ## 🚀 启动服务
 
 ```bash
-# 开发模式（推荐，支持热重载）
-bun run dev
-
 # 生产模式
 bun run start
+
+# 开发模式
+bun run dev
 
 # 后台运行
 nohup bun run start > logs/adapter.log 2>&1 &
@@ -137,10 +141,12 @@ npx @agent-tars/cli@latest run --provider openai --model o3-mini
 如果需要完整的开发环境和更多功能：
 
 ```bash
-# 1. 克隆 UI-TARS Desktop 项目
+# 1. 克隆 UI-TARS Desktop 项目并初始化
 git clone https://github.com/bytedance/UI-TARS-desktop.git
 cd UI-TARS-desktop
 pnpm install
+
+cd multimodal && pnpm bootstrap
 
 # 2. 在另一个终端启动适配器服务
 cd agent-tars-glm-4.5-adapter
