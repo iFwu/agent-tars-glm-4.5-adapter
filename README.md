@@ -1,4 +1,4 @@
-# TARS Agent GLM-4.5 Adapter
+# Agent TARS GLM-4.5 Adapter
 
 AI API 转换器，支持多服务提供商的 OpenAI 兼容 API，具备自动 fallback 机制。
 
@@ -11,24 +11,30 @@ AI API 转换器，支持多服务提供商的 OpenAI 兼容 API，具备自动 
 - 📊 **实时日志**: 提供详细的请求日志和进度指示
 - 🚀 **高性能**: 基于 Bun.js 运行时，启动快速，性能优异
 
-## 支持的服务提供商
+## 服务架构
 
-### 优先级顺序（自动 fallback）
+### 主要服务商
 
-1. **GLM-4.5** (智谱AI)
-   - 模型: `glm-4.5`
-   - 特性: tool_calls index 自动修复
-   - Fallback: 400+ 错误
+**GLM-4.5** (智谱AI) - 优先使用
+- 模型: `glm-4.5`
+- 特性: tool_calls index 自动修复
+- 高质量的中文支持
 
-2. **Kimi** (月之暗面)
+### Fallback 服务商
+
+系统支持按配置顺序自动 fallback，内置支持：
+
+1. **Kimi** (月之暗面)
    - 模型: `kimi-k2-0711-preview`
    - 特性: OpenAI 兼容，直接透传
-   - Fallback: 400+ 错误
 
-3. **ModelScope** (魔搭社区)
+2. **ModelScope** (魔搭社区)
    - 模型: `Qwen/Qwen3-Coder-480B-A35B-Instruct`
    - 特性: OpenAI 兼容，支持大 token
-   - Fallback: 400+ 错误
+
+3. **自定义 OpenAI 兼容服务商**
+   - 支持任意 OpenAI 兼容的 API
+   - 可灵活配置 model/baseUrl/apiKey
 
 ## 安装与使用
 
@@ -40,7 +46,7 @@ AI API 转换器，支持多服务提供商的 OpenAI 兼容 API，具备自动 
 ### 安装依赖
 
 ```bash
-cd tars-agent-glm-4.5-adapter
+cd agent-tars-glm-4.5-adapter
 bun install
 ```
 
@@ -52,24 +58,45 @@ bun install
 cp .env.example .env
 ```
 
-编辑 `.env` 文件，配置各服务提供商的 API Key：
+#### 基本配置
 
 ```env
-# GLM API Configuration
+# GLM 主要服务商（必需）
 GLM_API_KEY=your_glm_api_key_here
-GLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4
 
-# Kimi API Configuration  
+# Fallback 服务商（可选）
 KIMI_API_KEY=your_kimi_api_key_here
-KIMI_BASE_URL=https://api.moonshot.cn/v1
-
-# ModelScope API Configuration
 MODELSCOPE_API_KEY=your_modelscope_api_key_here
-MODELSCOPE_BASE_URL=https://api-inference.modelscope.cn/v1
 
-# Server Configuration
+# 服务器配置
 PORT=3000
 ```
+
+#### 高级配置 - JSON 格式 Fallback 定制
+
+使用 `FALLBACK_PROVIDERS` 环境变量进行 JSON 配置：
+
+```env
+# 使用预定义服务商（需要对应 API Key）
+FALLBACK_PROVIDERS=[{"provider":"kimi"},{"provider":"modelscope"}]
+
+# 混合使用预定义和自定义
+FALLBACK_PROVIDERS=[{"provider":"kimi"},{"model":"gpt-4","apiKey":"sk-xxx","baseUrl":"https://api.openai.com/v1"}]
+
+# 完全自定义
+FALLBACK_PROVIDERS=[{"name":"OpenAI","model":"gpt-4","apiKey":"sk-xxx","baseUrl":"https://api.openai.com/v1"},{"name":"Claude","model":"claude-3","apiKey":"sk-yyy","baseUrl":"https://api.anthropic.com/v1"}]
+```
+
+**JSON 配置字段说明：**
+- `provider`: 预定义服务商名 (`kimi`, `modelscope`)
+- `name`: 自定义服务商名称
+- `model`: 模型名称
+- `apiKey`: API 密钥
+- `baseUrl`: API 基础 URL
+- `timeout`: 超时时间 (毫秒)
+- `maxRetries`: 最大重试次数
+
+**默认配置：** `[{"provider":"kimi"},{"provider":"modelscope"}]`
 
 ### 启动服务
 
@@ -122,41 +149,42 @@ data: [DONE]
 
 ```
 src/
-├── config/          # 配置文件
-│   └── providers.ts  # 服务提供商配置
-├── core/            # 核心功能
+├── config/              # 配置文件
+│   └── providers.ts      # 服务提供商配置
+├── core/                # 核心功能
 │   ├── fallback-manager.ts # Fallback 管理器
-│   ├── logger.ts    # 日志系统
-│   └── stream.ts    # SSE 流处理
-├── providers/       # 服务提供商
-│   └── openai-compatible.ts # 通用 OpenAI 兼容提供商
-├── transformers/    # 数据转换器
-│   ├── glm.ts      # GLM 特定转换
-│   ├── kimi.ts     # Kimi 转换
-│   └── modelscope.ts # ModelScope 转换
-├── types/          # 类型定义
-│   └── index.ts    # 所有类型和 Zod schema
-└── server.ts       # 主服务器文件
+│   ├── logger.ts        # 日志系统
+│   ├── provider.ts      # 通用 Provider 类
+│   └── stream.ts        # SSE 流处理
+├── transformers/        # 数据转换器
+│   ├── glm.ts          # GLM 特定转换
+│   └── fallback.ts     # 通用 Fallback 转换器
+├── types/              # 类型定义
+│   └── index.ts        # 所有类型和 Zod schema
+└── server.ts           # 主服务器文件
 ```
 
 ## 核心特性
 
 ### 智能 Fallback 机制
 
-当服务请求失败时，系统会：
+系统按以下优先级处理请求：
 
-1. **参数验证失败**: 使用 Zod 提供详细错误信息
-2. **网络错误 (5xx)**: 自动重试，达到上限后 fallback
-3. **参数错误 (4xx)**: 不重试，直接 fallback
-4. **fallback 提示**: 向用户发送切换提示信息
+1. **GLM-4.5 优先**: 首先尝试 GLM-4.5 服务
+2. **自动 Fallback**: GLM 失败后按配置顺序尝试 fallback 服务商
+3. **错误分类处理**：
+   - **参数验证失败**: 使用 Zod 提供详细错误信息
+   - **网络错误 (5xx)**: 自动重试，达到上限后 fallback
+   - **参数错误 (4xx)**: 不重试，直接 fallback
+4. **用户通知**: 可选地向用户发送 fallback 切换提示
 
 ### 参数验证
 
 使用 Zod 对不同服务商进行个性化验证：
 
 - **GLM**: 严格的 temperature (0.01-0.99) 和 token 限制
-- **Kimi**: 标准 OpenAI 参数 + 扩展 token 支持
-- **ModelScope**: 大 token 支持 (最高 32K)
+- **Fallback 服务商**: 通用 OpenAI 兼容参数验证
+- **灵活配置**: 支持自定义参数限制
 
 ### 错误处理
 
@@ -166,15 +194,23 @@ src/
 
 ## 开发说明
 
-### 添加新的服务提供商
+### 添加新的 Fallback 服务商
 
-1. 在 `src/transformers/` 创建转换器
-2. 在 `src/config/providers.ts` 添加配置
-3. 更新环境变量模板
+#### 方式 1：使用环境变量快速添加
+
+```env
+# 添加自定义 OpenAI 兼容服务
+FALLBACK_PROVIDERS=kimi,gpt-4|sk-xxx|https://api.openai.com/v1
+```
+
+#### 方式 2：添加预定义服务商
+
+1. 在 `src/transformers/fallback.ts` 中添加到 `PREDEFINED_PROVIDERS`
+2. 更新环境变量模板
 
 ### 自定义验证规则
 
-在 `src/types/index.ts` 中添加新的 Zod schema。
+在 `src/types/index.ts` 中添加新的 Zod schema，系统会自动选择合适的验证规则。
 
 ## 许可证
 
