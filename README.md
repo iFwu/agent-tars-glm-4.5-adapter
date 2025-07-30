@@ -69,7 +69,7 @@ PORT=3000
 ```
 
 <details>
-<summary>** 🛠️ 高级 Fallback 策略配置 (可选)**</summary>
+<summary>🛠️ 高级 Fallback 策略配置 (可选)</summary>
 
 如果你想自定义 fallback 策略，可以使用 JSON 配置：
 
