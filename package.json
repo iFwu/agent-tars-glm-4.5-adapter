@@ -1,7 +1,7 @@
 {
   "name": "agent-tars-glm-4.5-adapter",
   "version": "1.0.0",
-  "description": "AI API 转换器 - 支持多服务提供商和 fallback 机制",
+  "description": "让 GLM-4.5 完美适配 Agent TARS 系统的高性能适配器 - 解决 toolcall 兼容性，提供智能 fallback，极低成本享受顶级 AI Agent 体验",
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
@@ -25,14 +25,18 @@
     "typescript": "^5.3.3"
   },
   "keywords": [
-    "api",
-    "converter",
-    "openai",
-    "glm",
-    "kimi",
-    "modelscope",
-    "streaming",
-    "typescript"
+    "agent-tars", 
+    "glm-4.5",
+    "ai-agent",
+    "openai-compatible",
+    "toolcall-adapter",
+    "fallback-mechanism",
+    "qwen3-coder",
+    "kimi-k2",
+    "cost-effective",
+    "typescript",
+    "bun",
+    "api-adapter"
   ],
   "author": "",
   "license": "MIT"
