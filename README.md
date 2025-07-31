@@ -133,7 +133,7 @@ export OPENAI_API_KEY=no-need-openai
 export OPENAI_BASE_URL=http://localhost:3000/v1
 
 # 3. 使用 npx 运行 Agent TARS（推荐）
-npx @agent-tars/cli@latest run --provider openai --model o3-mini
+npx @agent-tars/cli@latest --provider openai --model o3-mini
 ```
 
 ### 方法二：clone UI-TARS Desktop 仓库
@@ -158,7 +158,7 @@ export OPENAI_API_KEY=no-need-openai
 export OPENAI_BASE_URL=http://localhost:3000/v1
 
 # 使用本地 CLI
-./agent-tars-cli/bin/cli.js run --provider openai --model o3-mini
+./agent-tars-cli/bin/cli.js --provider openai --model o3-mini
 ```
 
 > 💡 **注意**: `--provider openai --model o3-mini` 只是为了让 TARS 识别，实际使用的是我们的 GLM-4.5 适配器
@@ -189,7 +189,7 @@ export OPENAI_BASE_URL=http://localhost:3000/v1
 ### 🛠️ 技术问题与解决方案
 **原生兼容性问题**：
 - GLM-4.5 的 toolcall 输出 index 为 -1，不符合 Agent TARS 规范
-- 大文本生成场景下偶发 500 Operation Failed 错误
+- 工具调用中有大文本生成场景下，经常发生 500 Operation Failed 错误
 
 **我们的解决方案**：
 - ✅ **toolcall 格式修正**: 自动修复 index 问题，完美兼容 Agent TARS
@@ -229,22 +229,6 @@ export OPENAI_BASE_URL=http://localhost:3000/v1
 "分析最近三个月国产大模型的发展趋势，包括技术突破和市场表现"
 ```
 
-### ⚡ 性能对比
-
-| 场景 | GLM-4.5 适配器 | 直接调用 GPT-4 | 优势 |
-|------|----------------|----------------|------|
-| **响应速度** | 100+ tokens/秒 | 20-50 tokens/秒 | **2-5倍提升** |
-| **月度成本** | ¥50 | ¥200-500 | **4-10倍节省** |
-| **中文理解** | 原生支持 | 一般 | **显著提升** |
-| **工具调用** | 经适配器优化 | 原生支持 | **兼容性更好** |
-| **稳定性** | 三重 Fallback | 单点故障 | **更可靠** |
-
-### 🎉 用户反馈
-
-> "速度飞快！比很多大厂的 AI 问答效果都好，成本还低到令人发指" - 开发者 A  
-> "在复杂的多步推理任务上表现出色，fallback 机制很贴心" - 研究员 B  
-> "终于可以用 ¥50 享受到媲美 GPT-4 的 Agent 体验了" - 产品经理 C
-
 ## 🎯 Agent TARS 系统介绍
 
 [Agent TARS](https://agent-tars.com/) 是字节跳动开源的革命性多模态 AI Agent 框架：
@@ -259,11 +243,11 @@ export OPENAI_BASE_URL=http://localhost:3000/v1
 
 | 模型 | 文本 | 视觉 | 工具调用 | 视觉定位 | 成本 | 推荐度 |
 |------|------|------|----------|----------|------|--------|
-| **GLM-4.5** | ✅ | ✅ | ✅* | 🚧 | 💰💰💰💰💰 | ⭐⭐⭐⭐⭐ |
-| Qwen3-Coder | ✅ | ✅ | ✅ | 🚧 | 💰💰💰 | ⭐⭐⭐⭐ |
-| Kimi-K2 | ✅ | ✅ | ✅ | 🚧 | 💰💰 | ⭐⭐⭐ |
-| GPT-4o | ✅ | ✅ | ✅ | 🚧 | 💰 | ⭐⭐ |
-| Claude 3.7 | ✅ | ✅ | ✅ | 🚧 | 💰 | ⭐⭐ |
+| **GLM-4.5** | ✅ | ❌ | ✅* | 🚧 | 💰 | ⭐⭐⭐⭐⭐ |
+| Qwen3-Coder | ✅ | ❌ | ✅ | 🚧 | 💰💰💰 | ⭐⭐⭐⭐ |
+| Kimi-K2 | ✅ | ❌ | ✅ | 🚧 | 💰💰 | ⭐⭐⭐ |
+| Claude 4 sonnet | ✅ | ✅ | ✅ | 🚧 | 💰💰💰💰💰 | ⭐⭐⭐ |
+| GPT-4o | ✅ | ✅ | ✅ | 🚧 | 💰💰💰💰 | ⭐⭐ |
 
 > *需要本适配器修复 toolcall index 问题
 
