@@ -172,11 +172,15 @@ export OPENAI_BASE_URL=http://localhost:3000/v1
 - **实测速度超过 100 tokens/秒**，响应飞快
 
 <details>
-<summary>🎯 点击查看 ¥50 个人畅玩包详情</summary>
+<summary>🎁 立即领取 ¥50 套餐：1 万亿 Tokens 极速畅玩</summary>
 
-<div align="center">
-<img src="https://linux.do/uploads/default/original/4X/3/b/f/3bf59820f7885598c48b7ab36fa39eb58cd64e2d.jpeg" alt="GLM-4.5 个人畅玩包" width="400"/>
-</div>
+- 💰 **仅需 ¥50/月**
+- 🎯 **1 万亿 Tokens 畅用不限量**
+- ⚡ **实测生成速度 100+ tokens/秒**
+- ✅ **支持 Claude Code、Kimi CLI、Roo Code 等全栈场景**
+
+👉 [立即购买 V50 套餐](https://zhipuaishengchan.datasink.sensorsdata.cn/t/gv)
+</details>
 
 </details>
 
