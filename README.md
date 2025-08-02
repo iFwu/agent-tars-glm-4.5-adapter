@@ -2,7 +2,7 @@
 
 **让 GLM-4.5 完美适配 Agent TARS 系统的高性能适配器**  
 
-一个专为 [Agent TARS](https://agent-tars.com/) 系统打造的 GLM-4.5 API 适配器，解决原生 toolcall 兼容性问题，提供智能 fallback 机制，让你以极低成本享受顶级 AI Agent 体验！
+一个专为 [Agent TARS](https://agent-tars.com/) 系统打造的 GLM-4.5 API 适配器，解决原生 toolcall 兼容性问题，同时也可以修复 GLM-4.5 在 [CherryStudio 中的 ToolCall 中断问题](https://github.com/CherryHQ/cherry-studio/issues/8687)，提供智能 fallback 机制，让你以极低成本享受顶级 AI Agent 体验！
 
 ## 🛠️ 快速开始
 
